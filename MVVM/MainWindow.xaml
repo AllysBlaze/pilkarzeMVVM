@@ -1,0 +1,29 @@
+﻿<Window x:Class="MVVM.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MVVM"
+        xmlns:vm="clr-namespace:MVVM.ViewModel"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <vm:KlasaViewModel x:Key="execute" />
+    </Window.Resources>
+    <Grid DataContext="{StaticResource execute}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="3*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="6*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="1" Text="{Binding Zawartosc, Mode=TwoWay}"/>
+            <Button Command="{Binding Dodaj}" x:Name="buttonDodaj" Grid.Column="0" Content="Dodaj" Margin="10" IsEnabled="True"/>
+        </Grid>
+        <ListBox Grid.Row="1" ItemsSource="{Binding Pilkarze}" SelectedIndex="{Binding Indeks}"/>
+    </Grid>
+</Window>
