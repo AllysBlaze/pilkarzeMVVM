@@ -5,25 +5,53 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MVVM"
         xmlns:vm="clr-namespace:MVVM.ViewModel"
+        
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" 
+        >
+    
     <Window.Resources>
+        
         <vm:KlasaViewModel x:Key="execute" />
     </Window.Resources>
+    
     <Grid DataContext="{StaticResource execute}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="3*"/>
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="6*"/>
-            </Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0">
+            <Label Content = "Imie"/>
+            <TextBox x:Name="textBoxImie" Margin="5" Text="{Binding Imie}" />
+            <Label  Content = "Podaj nazwisko" />
+            <TextBox x:Name="textBoxNazwisko" Margin="5" Text="{Binding Nazwisko}"/>
 
-            <TextBox Grid.Column="1" Text="{Binding Zawartosc, Mode=TwoWay}"/>
-            <Button Command="{Binding Dodaj}" x:Name="buttonDodaj" Grid.Column="0" Content="Dodaj" Margin="10" IsEnabled="True"/>
-        </Grid>
-        <ListBox Grid.Row="1" ItemsSource="{Binding Pilkarze}" SelectedIndex="{Binding Indeks}"/>
+            <Label x:Name="labelPWiek" Margin="5" Content = "Podaj wiek"/>
+            <Slider x:Name="sliderWiek" TickFrequency="1" IsSnapToTickEnabled="True" Maximum="100" Margin="5" Minimum="15" Value="{Binding Wiek}"/>
+            <Label x:Name="labelWiek" Content="{Binding ElementName=sliderWiek, Path=Value, UpdateSourceTrigger=PropertyChanged}"  Width="40" Margin="5"/>
+            <Label x:Name="labelPWaga" Margin="5" Content = "Podaj wagę (kg)"/>
+            <Slider x:Name="sliderWaga" TickFrequency="1" IsSnapToTickEnabled="True" Maximum="150" Margin="5" Minimum="40" Value="{Binding Waga}"/>
+            <Label x:Name="labelWaga" Content="{ Binding ElementName=sliderWaga, Path=Value, UpdateSourceTrigger=PropertyChanged}" Width="40" Margin="5"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+
+                </Grid.RowDefinitions>
+                <Button Command="{Binding Dodaj}" Grid.Column="0"  Grid.Row="0" Content="Dodaj" Margin="10" IsEnabled="True"/>
+                <Button Command="{Binding Edytuj}" Grid.Column="1"  Grid.Row="0" Content="Edytuj" Margin="10" IsEnabled="True"/>
+                <Button Command="{Binding Usun}" Grid.Column="2"  Grid.Row="0" Content="Usun" Margin="10" IsEnabled="True"/>
+            </Grid>
+
+        </StackPanel>
+
+        <ListBox Grid.Column="1" ItemsSource="{Binding Pilkarze}" SelectedIndex="{Binding Indeks}"/>
+
+
     </Grid>
 </Window>

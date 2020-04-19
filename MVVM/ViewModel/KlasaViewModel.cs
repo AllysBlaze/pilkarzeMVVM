@@ -11,20 +11,72 @@ namespace MVVM.ViewModel
     using System.Windows.Input;
     class KlasaViewModel : ViewModelBase
     {
-        private string zawartosc=null;
-        public string Zawartosc
+        private string nazwa = "plik.txt";
+        private Przyciski przycisk = new Przyciski();
+        public KlasaViewModel()
+        {
+            przycisk.ZPliku(nazwa);
+            Refresh();
+        }
+        #region Imie, Nazwisko itp
+        private string imie=null;
+        public string Imie
         {
             get
             {
-                return zawartosc;
+                return imie;
 
             }
             set
             {
-                zawartosc = value;
-                onPropertyChanged(nameof(Zawartosc));
+                imie = value;
+                onPropertyChanged(nameof(Imie));
             }
         }
+        private string nazwisko = null;
+        public string Nazwisko
+        {
+            get
+            {
+                return nazwisko;
+
+            }
+            set
+            {
+                nazwisko = value;
+                onPropertyChanged(nameof(Nazwisko));
+            }
+        }
+
+        private int wiek=15;
+        public int Wiek
+        {
+            get
+            {
+                return wiek;
+
+            }
+            set
+            {
+                wiek = value;
+                onPropertyChanged(nameof(Wiek));
+            }
+        }
+        private int waga=40;
+        public int Waga
+        {
+            get
+            {
+                return waga;
+
+            }
+            set
+            {
+                waga = value;
+                onPropertyChanged(nameof(Waga));
+            }
+        }
+        #endregion
         private string[] pilkarze;
         public string[] Pilkarze
         {
@@ -35,9 +87,49 @@ namespace MVVM.ViewModel
                 onPropertyChanged(nameof(Pilkarze));
             }
         }
-
-        private Przyciski przycisk = new Przyciski();
         private int indeks = -1;
+        
+        #region przyciski
+        private ICommand dodaj = null;
+        public ICommand Dodaj
+        {
+            get
+            {
+                if(dodaj==null)
+                {
+                    dodaj = new RelayCommand(x => { przycisk.Dodaj(Imie, Nazwisko, Wiek, Waga); Refresh(); },
+                        x => (Imie != null && Nazwisko != null));
+                }
+                return dodaj;
+            }
+        }
+        private ICommand edytuj = null;
+        public ICommand Edytuj
+        {
+            get
+            {
+                if (edytuj == null)
+                {
+                    edytuj = new RelayCommand(x => { przycisk.Edytuj(Indeks,Imie, Nazwisko, Wiek, Waga); Refresh(); },
+                        x => Imie != null && Nazwisko != null);
+                }
+                return edytuj;
+            }
+        }
+        private ICommand usun = null;
+        public ICommand Usun
+        {
+            get
+            {
+                if (usun == null)
+                {
+                    usun = new RelayCommand(x => { przycisk.Usun(Indeks); Refresh(); },
+                        x=>(Indeks>-1));
+                }
+                return usun;
+            }
+        }
+        #endregion
         public int Indeks
         {
             get
@@ -48,29 +140,28 @@ namespace MVVM.ViewModel
             {
                 indeks = value;
                 if (indeks != -1)
-                    zawartosc = przycisk.getZawartosc(indeks);
+                {
+                    Imie = przycisk.getImie(indeks);
+                    Nazwisko = przycisk.getNazwisko(indeks);
+                    Wiek = przycisk.getWiek(indeks);
+                    Waga = przycisk.getWaga(indeks);
+                }
                 onPropertyChanged(nameof(indeks));
             }
-            
+
         }
 
-        private ICommand dodaj = null;
-        public ICommand Dodaj
-        {
-            get
-            {
-                if(dodaj==null)
-                {
-                    dodaj = new RelayCommand(x => { przycisk.Dodaj(Zawartosc); Refresh(); });
-                }
-                return dodaj;
-            }
-        }
+
+        
         public void Refresh()
         {
             Pilkarze = przycisk.Show();
-            Zawartosc = null;
+            Imie = null;
+            Nazwisko = null;
+            Wiek = 15;
+            Waga = 40;
+            przycisk.DoPliku(nazwa);
         }
-        
+
     }
 }
