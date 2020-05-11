@@ -15,7 +15,7 @@ namespace MVVM.ViewModel
         private Przyciski przycisk = new Przyciski();
         public KlasaViewModel()
         {
-            przycisk.ZPliku(nazwa);
+            przycisk.ZPliku();
             Refresh();
         }
         #region Imie, Nazwisko itp
@@ -160,7 +160,7 @@ namespace MVVM.ViewModel
             Nazwisko = null;
             Wiek = 15;
             Waga = 40;
-            przycisk.DoPliku(nazwa);
+            przycisk.DoPliku();
         }
 
     }

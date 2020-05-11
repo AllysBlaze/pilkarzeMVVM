@@ -1,10 +1,10 @@
-﻿using System.IO;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System;
-
+using System.IO;
+using System.Xml;
+using System.Xml.Linq;
 namespace MVVM.Model
 {
     class Przyciski
@@ -48,7 +48,9 @@ namespace MVVM.Model
                     break;
                 }
             }
-                
+            if(dl==0)
+                lista.Add(nowy);
+
         }
         public void Edytuj(int indeks,string imie, string nazwisko, int wiek, int waga)
         {
@@ -69,7 +71,7 @@ namespace MVVM.Model
         #endregion
 
         #region strumienie
-        public  void DoPliku(string plik)
+        public  void DoPliku()
         {
             int n = lista.Count;
             KlasaModel[] km = null;
@@ -79,27 +81,53 @@ namespace MVVM.Model
                 int i = 0;
                 foreach (var k in lista)
                     km[i++] = k as KlasaModel;
-                using (StreamWriter stream = new StreamWriter(plik))
+                XmlWriterSettings set = new XmlWriterSettings();
+                set.Indent = true;
+                using (XmlWriter w = XmlWriter.Create("pilkarze.xml", set))
                 {
+                    w.WriteStartElement("lista");
                     foreach (var k in km)
-                        stream.WriteLine(k.ToFileFormat());
-                    stream.Close();
+                    {
+                        w.WriteStartElement("Pilkarz");
+                        w.WriteStartElement("Imie", k.Imie);
+                        w.WriteStartElement("Nazwisko", k.Nazwisko);
+                        w.WriteStartElement("Wiek", k.Wiek.ToString());
+                        w.WriteStartElement("Waga", k.Waga.ToString());
+                        w.WriteEndElement();
+                    }
+                    w.WriteEndElement();
                 }
             }
             
         }
-        public void ZPliku(string nazwa)
+        public void ZPliku()
         {
-            if(File.Exists(nazwa))
-            {
-                var temp = File.ReadAllLines(nazwa);
-                var dlugosc = temp.Length;
-                for (int i=0;i<dlugosc;i++)
+            string imie, nazwisko;
+            int wiek, waga;
+            XmlReaderSettings set = new XmlReaderSettings();
+            set.IgnoreWhitespace = true;
+            if (File.Exists("pilkarze.xml"))
                 {
-                    var str = CreateFromString(temp[i]);
-                    lista.Add(str);
+                using (XmlReader r = XmlReader.Create("pilkarze.xml", set))
+                {
+                    r.ReadStartElement("lista");
+                    while (r.Name == "Pilkarz")
+                    {
+                        XElement p = (XElement)XNode.ReadFrom(r);
+                        imie = (string)p.Element("Imie");
+                        nazwisko = (string)p.Element("Nazwisko");
+                        var t1 = (string)p.Element("Waga");
+                        var t2 = (string)p.Element("Wiek");
+                        if (t1 != null && t2 != null)
+                        {
+                            wiek = Int32.Parse(t1);
+                            waga = Int32.Parse(t2);
+                            lista.Add(new KlasaModel(imie, nazwisko, wiek, waga));
+                        }
+                    }
                 }
             }
+            
         }
 
         public KlasaModel CreateFromString(string str)
