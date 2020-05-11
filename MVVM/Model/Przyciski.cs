@@ -73,31 +73,24 @@ namespace MVVM.Model
         #region strumienie
         public  void DoPliku()
         {
-            int n = lista.Count;
-            KlasaModel[] km = null;
-            if (n>0)
+            XmlWriterSettings set = new XmlWriterSettings();
+            set.Indent = true;
+
+            using (XmlWriter w = XmlWriter.Create("pilkarze.xml", set))
             {
-                km = new KlasaModel[n];
-                int i = 0;
+                w.WriteStartElement("lista");
                 foreach (var k in lista)
-                    km[i++] = k as KlasaModel;
-                XmlWriterSettings set = new XmlWriterSettings();
-                set.Indent = true;
-                using (XmlWriter w = XmlWriter.Create("pilkarze.xml", set))
                 {
-                    w.WriteStartElement("lista");
-                    foreach (var k in km)
-                    {
-                        w.WriteStartElement("Pilkarz");
-                        w.WriteStartElement("Imie", k.Imie);
-                        w.WriteStartElement("Nazwisko", k.Nazwisko);
-                        w.WriteStartElement("Wiek", k.Wiek.ToString());
-                        w.WriteStartElement("Waga", k.Waga.ToString());
-                        w.WriteEndElement();
-                    }
+                    w.WriteStartElement("Pilkarz");
+                    w.WriteElementString("Imie", k.Imie);
+                    w.WriteElementString("Nazwisko", k.Nazwisko);
+                    w.WriteElementString("Wiek", k.Wiek.ToString());
+                    w.WriteElementString("Waga", k.Waga.ToString());
                     w.WriteEndElement();
                 }
+                w.WriteEndElement();
             }
+            
             
         }
         public void ZPliku()
@@ -107,7 +100,7 @@ namespace MVVM.Model
             XmlReaderSettings set = new XmlReaderSettings();
             set.IgnoreWhitespace = true;
             if (File.Exists("pilkarze.xml"))
-                {
+            {
                 using (XmlReader r = XmlReader.Create("pilkarze.xml", set))
                 {
                     r.ReadStartElement("lista");
@@ -116,14 +109,10 @@ namespace MVVM.Model
                         XElement p = (XElement)XNode.ReadFrom(r);
                         imie = (string)p.Element("Imie");
                         nazwisko = (string)p.Element("Nazwisko");
-                        var t1 = (string)p.Element("Waga");
-                        var t2 = (string)p.Element("Wiek");
-                        if (t1 != null && t2 != null)
-                        {
-                            wiek = Int32.Parse(t1);
-                            waga = Int32.Parse(t2);
-                            lista.Add(new KlasaModel(imie, nazwisko, wiek, waga));
-                        }
+                        wiek = (int)p.Element("Wiek");
+                        waga = (int)p.Element("Waga");
+                        lista.Add(new KlasaModel(imie, nazwisko, wiek, waga));
+
                     }
                 }
             }
